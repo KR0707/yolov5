@@ -5,17 +5,14 @@ import board
 import time
 import digitalio
 
-#GPIO Setting : C0 will be output port.
-sensor = digitalio.DigitalInOut(board.C0)
-solenoidforfront = digitalio.DigitalInOut(board.C1)
-solenoidforback = digitalio.DigitalInOut(board.C2)
-sensor.direction = digitalio.Direction.INPUT
-solenoidforfront.direction = digitalio.Direction.OUTPUT
-solenoidforback.direction = digitalio.Direction.OUTPUT
 
+gpio = digitalio.DigitalInOut(board.C2)
+gpio.direction = digitalio.Direction.OUTPUT
 
 while True:
-    led.value = True
-    time.sleep(0.5)
-    led.value = False
-    time.sleep(0.5)
+    gpio.value = True
+    print(gpio.value)
+    time.sleep(0.3)
+    gpio.value = False
+    print(gpio.value)
+    time.sleep(0.3)

@@ -13,7 +13,7 @@ model.conf = 0.8 #--- 検出の下限値（<1）。設定しなければすべ�
 
 #--- 映像の読込元指定 ---
 #camera = cv2.VideoCapture("../pytorch_yolov3/data/sample.avi")#--- localの動画ファイルを指定
-camera = cv2.VideoCapture(0)                #--- カメラ：Ch.(ここでは0)を指定
+camera = cv2.VideoCapture(2)                #--- カメラ：Ch.(ここでは0)を指定
 
 
 #--- 画像のこの位置より左で検出したら、ヒットとするヒットエリアのためのパラメータ ---
