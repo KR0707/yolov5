@@ -8,6 +8,7 @@ model = torch.hub.load("../yolov5",'custom', path = "/home/kamata/Program/yolov5
  
 #--- 検出の設定 ---
 model.conf = 0.7 #--- 検出の下限値（<1）。設定しなければすべて検出
+
 #model.classes = [0] #--- 0:person クラスだけ検出する。設定しなければすべて検出
 #print(model.names) #--- （参考）クラスの一覧をコンソールに表示
 
