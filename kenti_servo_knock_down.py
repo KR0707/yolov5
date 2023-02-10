@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 import time
 import os
-#os.environ['BLINKA_FT232H'] = '1' #Setting Environmental Variable
 import board
 import time
 import digitalio
@@ -14,12 +13,6 @@ import serial
 ser = serial.Serial('/dev/ttyACM0', 9600) # ここのポート番号を変更
 ser.readline()
 
-#GPIO Setting
-
-solenoidforfront = digitalio.DigitalInOut(board.C1)
-solenoidforback = digitalio.DigitalInOut(board.C2)
-solenoidforfront.direction = digitalio.Direction.OUTPUT
-solenoidforback.direction = digitalio.Direction.OUTPUT
 
 def getModel():
     model = torch.hub.load("../yolov5",'custom', path = "/home/kamata/Program/yolov5/models/BKweights.pt", source='local')
@@ -68,25 +61,14 @@ while True:
             print("No object")
             continue
         objects_s = objects.sort_values(by='xmin', ascending=False)
-
-
         reverse_object = objects_s.iloc[0, 5]
-        #time.sleep(0.1)
-        if reverse_object == 1:
-            while val_disp < 500:
-                solenoidforfront.value = False
-                solenoidforback.value = True
-                time.sleep(0.1)
-            solenoidforfront.value = False
-            solenoidforback.value = False
-            time.sleep(0.1)
-        
-        elif reverse_object == 0:
-            while val_disp < 500:
-                solenoidforfront.value = True
-                solenoidforback.value = False
-                time.sleep(0.1)
-            solenoidforfront.value = False
-            solenoidforback.value = False
-            time.sleep(0.1)
-ser.readline()
+        if reverse_object == 0:
+            ser.write(b'r')
+            continue
+        elif reverse_object == 1:
+            ser.write(b'l')
+            continue
+
+        #ひっくり返す処理
+
+ser.close()

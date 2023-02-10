@@ -31,7 +31,7 @@ while True:
 
 #--- 推定の検出結果を取得 ---
 #  results = model(imgs) #--- サイズを指定しない場合は640ピクセルの画像にして処理
-  results = model(imgs, size=640) #--- 160ピクセルの画像にして処理
+  results = model(imgs, size=320) #--- 160ピクセルの画像にして処理
 
 #--- 出力 ---
 #--- 検出結果を画像に描画して表示 ---
@@ -66,6 +66,9 @@ while True:
 
   #--- 描画した画像を表示
   cv2.imshow('color',imgs)
+  result = results.pandas().xyxy[0] #--- pandasで出力
+  print(result)
+  
 
 #--- （参考）yolo標準機能を使った出力 ---
 #  results.show()#--- yolo標準の画面表示
