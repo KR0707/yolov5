@@ -1,13 +1,14 @@
 import sys
 import cv2
 import torch
+import numpy as np
 
 #--- 検出する際のモデルを読込 ---
 #model = torch.hub.load('ultralytics/yolov5','yolov5s')#--- webのyolov5sを使用
 model = torch.hub.load("../yolov5",'custom', path = "/home/kamata/Program/yolov5/models/BKweights.pt", source='local')
  
 #--- 検出の設定 ---
-model.conf = 0.7 #--- 検出の下限値（<1）。設定しなければすべて検出
+model.conf = 0.55 #--- 検出の下限値（<1）。設定しなければすべて検出
 
 #model.classes = [0] #--- 0:person クラスだけ検出する。設定しなければすべて検出
 #print(model.names) #--- （参考）クラスの一覧をコンソールに表示
@@ -25,13 +26,28 @@ while True:
 #--- 画像の取得 ---
 #  imgs = 'https://ultralytics.com/images/bus.jpg'#--- webのイメージファイルを画像として取得
 #  imgs = ["../pytorch_yolov3/data/dog.png"] #--- localのイメージファイルを画像として取得
-  ret, imgs = camera.read()              #--- 映像から１フレームを画像として取得
+  ret, imgs = camera.read() 
+  #imgs = cv2.convertScaleAbs(imgs, alpha=1.3, beta=20)     
+  br_filter = cv2.bilateralFilter(imgs,  # 入力画像
+                                9,  # 注目画素の周辺領域（値が大きいほどぼかしが強くなる）
+                                120,  # 色空間の標準偏差
+                                10    # 距離空間の標準偏差
+                               )        #--- 映像から１フレームを画像として取得
   #imgs = cv2.cvtColor(imgs, cv2.COLOR_BGR2GRAY) #--- カラースペースをRGBに変換
-  
+  #imgs = cv2.convertScaleAbs(imgs, alpha=1.3, beta=20)
 
 #--- 推定の検出結果を取得 ---
-#  results = model(imgs) #--- サイズを指定しない場合は640ピクセルの画像にして処理
-  results = model(imgs, size=320) #--- 160ピクセルの画像にして処理
+  #results = model(imgs) #--- サイズを指定しない場合は640ピクセルの画像にして処理
+  gamma     = 1.5                            # γ値を指定
+  img2gamma = np.zeros((256,1),dtype=np.uint8)  # ガンマ変換初期値
+
+# 公式適用
+  for i in range(256):
+    img2gamma[i][0] = 255 * (float(i)/255) ** (1.0 /gamma)
+
+# 読込画像をガンマ変換
+  gamma_img = cv2.LUT(imgs,img2gamma)
+  results = model(gamma_img, size=640) #--- 160ピクセルの画像にして処理
 
 #--- 出力 ---
 #--- 検出結果を画像に描画して表示 ---
@@ -66,6 +82,7 @@ while True:
 
   #--- 描画した画像を表示
   cv2.imshow('color',imgs)
+  cv2.imshow('gray',gamma_img)
   result = results.pandas().xyxy[0] #--- pandasで出力
   print(result)
   
