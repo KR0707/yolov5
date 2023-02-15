@@ -2,6 +2,7 @@ import sys
 import cv2
 import torch
 import numpy as np
+import time
 
 #--- 検出する際のモデルを読込 ---
 #model = torch.hub.load('ultralytics/yolov5','yolov5s')#--- webのyolov5sを使用
@@ -46,6 +47,7 @@ while True:
     img2gamma[i][0] = 255 * (float(i)/255) ** (1.0 /gamma)
 
 # 読込画像をガンマ変換
+  #imgs = cv2.resize(imgs, (640, 640))
   gamma_img = cv2.LUT(imgs,img2gamma)
   results = model(gamma_img, size=640) #--- 160ピクセルの画像にして処理
 
@@ -85,7 +87,8 @@ while True:
   cv2.imshow('gray',gamma_img)
   result = results.pandas().xyxy[0] #--- pandasで出力
   print(result)
-  
+  #time.sleep(0.001)
+  #cv2.waitKey(25)
 
 #--- （参考）yolo標準機能を使った出力 ---
 #  results.show()#--- yolo標準の画面表示
